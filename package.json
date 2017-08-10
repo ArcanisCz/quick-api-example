@@ -2,9 +2,9 @@
   "name": "quick-api-example",
   "version": "1.0.0",
   "description": "quick-api-example",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
-    "start": "nodemon -w src --exec \"babel-node src/server.js --presets es2015\""
+    "start": "nodemon src/server.js -w src"
   },
   "repository": {
     "type": "git",

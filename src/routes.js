@@ -1,24 +1,17 @@
-import {
-    getAll,
-    createTodo,
-    deleteTodo,
-    updateText,
-    complete,
-    incomplete,
-} from "./controller";
+const controller = require("./controller");
 
-export default (app) => {
+module.exports = function(app) {
     app.route('/')
-        .get(getAll)
-        .post(createTodo);
+        .get(controller.getAll)
+        .post(controller.createTodo);
 
     app.route("/:id")
-        .post(updateText)
-        .delete(deleteTodo);
+        .post(controller.updateText)
+        .delete(controller.deleteTodo);
 
     app.route("/todos/:id/complete")
-        .post(complete);
+        .post(controller.complete);
 
     app.route("/todos/:id/incomplete")
-        .post(incomplete);
+        .post(controller.incomplete);
 };

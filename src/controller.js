@@ -1,9 +1,9 @@
-import lowdb from "lowdb";
-import {v1} from "uuid";
+const lowdb = require("lowdb");
+const uuid = require("uuid");
 
 const DB = lowdb('db.json');
 
-export const getAll = ({}, res) => {
+module.exports.getAll = function (req, res) {
     const posts = DB.get("todos")
         .sortBy('createdDate')
         .reverse()
@@ -11,14 +11,14 @@ export const getAll = ({}, res) => {
     res.send(posts);
 };
 
-export const createTodo = ({body}, res) => {
-    if (!body.text) {
+module.exports.createTodo = function (req, res) {
+    if (!req.body.text) {
         res.status(422).send("'text' field must be present in json");
     } else {
         const written = DB.get('todos')
             .push({
-                id: v1(),
-                text: body.text,
+                id: uuid.v1(),
+                text: req.body.text,
                 completed: false,
                 createdDate: new Date().getTime()
             })
@@ -28,13 +28,13 @@ export const createTodo = ({body}, res) => {
     }
 };
 
-export const deleteTodo = ({param}, res) => {
-    const id = param("id");
+module.exports.deleteTodo = function (req, res) {
+    const id = req.param("id");
     if (!id) {
         res.status(422).send("'id' must be present in params");
     } else {
         const deleted = DB.get('todos')
-            .remove({id})
+            .remove({id: id})
             .last()
             .write();
         if (deleted.length === 0) {
@@ -45,25 +45,25 @@ export const deleteTodo = ({param}, res) => {
     }
 };
 
-export const updateText = ({param, body}, res) => {
-    const text = body.text;
-    const id = param("id");
+module.exports.updateText = function (req, res) {
+    const text = req.body.text;
+    const id = req.param("id");
     if (!text) {
         res.status(422).send("'text' field must be present in json");
     } else if (!id) {
         res.status(422).send("'id' must be present in params");
     } else {
         const written = DB.get('todos')
-            .find({id})
-            .assign({text})
+            .find({id: id})
+            .assign({text: text})
             .last()
             .write();
         res.send(written);
     }
 };
 
-export const complete = ({param}, res) => {
-    const id = param("id");
+module.exports.complete = function (req, res) {
+    const id = req.param("id");
     if (!id) {
         res.status(422).send("'id' must be present in params");
     } else {
@@ -85,7 +85,7 @@ export const complete = ({param}, res) => {
     }
 };
 
-export const incomplete = ({req}, res) => {
+module.exports.incomplete = function (req, res) {
     const id = req.param("id");
     if (!id) {
         res.status(422).send("'id' must be present in params");
